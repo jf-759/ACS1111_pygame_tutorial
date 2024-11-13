@@ -1,16 +1,16 @@
-from random import randint
+from random import randint, choice
 import pygame
 pygame.init()
 
 screen = pygame.display.set_mode([500, 500])
+
+lanes = [93, 218, 343]
 
 # Game Object
 class GameObject(pygame.sprite.Sprite):
   # Remove width and height and add image here!
   def __init__(self, x, y, image):
     super(GameObject, self).__init__()
-    # self.surf = pygame.Surface((width, height)) REMOVE!
-    # self.surf.fill((255, 0, 255)) REMOVE!
     self.surf = pygame.image.load(image) # ADD!
     self.x = x
     self.y = y
@@ -26,13 +26,12 @@ class Apple(GameObject):
         self.reset() # this is where you call the reset.
     
     def move(self):
-        self.x += self.dx
         self.y += self.dy
         if self.y > 500:
            self.reset()
 
     def reset(self):
-       self.x = randint(50, 400)
+       self.x = choice(lanes)
        self.y = -64
 
 class Strawberry(GameObject):
@@ -44,16 +43,14 @@ class Strawberry(GameObject):
     
     def move(self):
         self.x += self.dx
-        self.y += self.dy
         if self.x > 500:
            self.reset()
 
     def reset(self):
        self.x = -64
-       self.y = randint(50, 400)
+       self.y = choice(lanes)
 
 
-# instance of GameObject
 screen.fill((255, 255, 255))
 
 # example from 03-making-things-move
