@@ -26,9 +26,9 @@ class Apple(GameObject):
         self.reset() # this is where you call the reset.
     
     def move(self):
-        self.y += self.dy
-        if self.y > 500:
-           self.reset()
+            self.y += self.dy
+            if self.y > 500:
+                self.reset()
 
     def reset(self):
        self.x = choice(lanes)
@@ -50,12 +50,44 @@ class Strawberry(GameObject):
        self.x = -64
        self.y = choice(lanes)
 
+class Player(GameObject):
+    def __init__(self):
+        super(Player, self).__init__(0, 0, 'player.png')
+        self.dx = 0
+        self.dy = 0
+        self.reset()
 
-screen.fill((255, 255, 255))
+    def left(self):
+        if self.dx > 0:
+            self.dx -= 100
+        
+    def right(self):
+        if self.dx < 500 - 64:
+            self.dx += 100
+
+    def up(self):
+        if self.dy > 0:
+            self.dy  -= 100
+
+    def down(self):
+        if self.dy < 500 -64:
+            self.dy += 100
+
+    def move(self):
+        self.x -= (self.x - self.dx) * 0.25
+        self.y -= (self.y - self.dy) * 0.25
+
+        self.x = max(0, min(self.x, 500 - 64))
+        self.y = max(0, min(self.y, 500 - 64))
+
+    def reset(self):
+       self.x = 250 - 32
+       self.y = 250 - 32
 
 # example from 03-making-things-move
 apple = Apple()
 strawberry = Strawberry()
+player = Player()
 clock = pygame.time.Clock()
 
 # game loop
@@ -65,12 +97,35 @@ while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
+        elif event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_ESCAPE:
+               running = False
+            elif event.key == pygame.K_LEFT:
+                player.left()
+                print('LEFT')
+            elif event.key == pygame.K_RIGHT:
+                player.right()
+                print('RIGHT')
+            elif event.key == pygame.K_UP:
+                player.up()
+                print('UP')
+            elif event.key == pygame.K_DOWN:
+                player.down()
+                print('DOWN')
 
-    # apple.x += 1
+    screen.fill((255, 255, 255))
+
+    # draw apple
     apple.move()
-    strawberry.move()
     apple.render(screen)
+
+    # draw strawberry
+    strawberry.move()
     strawberry.render(screen)
+
+    # draw player
+    player.move()
+    player.render(screen)
 
     # apple1.render(screen)
     # apple2.render(screen)
