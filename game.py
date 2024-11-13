@@ -1,69 +1,89 @@
+from random import randint
 import pygame
-
 pygame.init()
 
 screen = pygame.display.set_mode([500, 500])
 
-color = (105, 105, 105)
+# Game Object
+class GameObject(pygame.sprite.Sprite):
+  # Remove width and height and add image here!
+  def __init__(self, x, y, image):
+    super(GameObject, self).__init__()
+    # self.surf = pygame.Surface((width, height)) REMOVE!
+    # self.surf.fill((255, 0, 255)) REMOVE!
+    self.surf = pygame.image.load(image) # ADD!
+    self.x = x
+    self.y = y
 
-radius = 70
-padding = 25
-rows = 3
-cols = 3
+  def render(self, screen):
+    screen.blit(self.surf, (self.x, self.y))
 
-#the game loop
+class Apple(GameObject):
+    def __init__(self):
+        super(Apple, self).__init__(0, 0, 'apple.png')
+        self.dx = 0
+        self.dy = (randint(0, 200) / 100) + 1
+        self.reset() # this is where you call the reset.
+    
+    def move(self):
+        self.x += self.dx
+        self.y += self.dy
+        if self.y > 500:
+           self.reset()
+
+    def reset(self):
+       self.x = randint(50, 400)
+       self.y = -64
+
+class Strawberry(GameObject):
+    def __init__(self):
+        super(Strawberry, self).__init__(0, 0, 'strawberry.png')
+        self.dx = (randint(0, 200) / 100) + 1
+        self.dy = 0
+        self.reset() # this is where you call the reset.
+    
+    def move(self):
+        self.x += self.dx
+        self.y += self.dy
+        if self.x > 500:
+           self.reset()
+
+    def reset(self):
+       self.x = -64
+       self.y = randint(50, 400)
+
+
+# instance of GameObject
+screen.fill((255, 255, 255))
+
+# example from 03-making-things-move
+apple = Apple()
+strawberry = Strawberry()
+clock = pygame.time.Clock()
+
+# game loop
 running = True
 while running:
+    # looks at events
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
-    
-    #clear the screen
-    screen.fill((255, 255, 255))
 
-    # challenge 1
-    # draw a circle
+    # apple.x += 1
+    apple.move()
+    strawberry.move()
+    apple.render(screen)
+    strawberry.render(screen)
 
-    # #red
-    # color = (255, 0, 0) 
-    # position = (100, 100)
-    # pygame.draw.circle(screen, color, position, 75)
+    # apple1.render(screen)
+    # apple2.render(screen)
+    # apple3.render(screen)
+    # apple4.render(screen)
+    # apple5.render(screen)
+    # strawberry1.render(screen)
+    # strawberry2.render(screen)
+    # strawberry3.render(screen)
+    # strawberry4.render(screen)
 
-    # #orange
-    # color = (255, 165, 0)
-    # position = (400, 100)
-    # pygame.draw.circle(screen, color, position, 75)
-
-    # #yellow
-    # color = (255, 255, 0)
-    # position = (250, 250)
-    # pygame.draw.circle(screen, color, position, 75)
-
-    # #green
-    # color = (0, 255, 0)
-    # position = (100, 400)
-    # pygame.draw.circle(screen, color, position, 75)
-
-    # #cyan
-    # color = (0, 255, 255)
-    # position = (400, 400)
-    # pygame.draw.circle(screen, color, position, 75)
-
-
-    # challenge 2
-
-    for row in range(rows):
-        for col in range(cols):
-            x = col * (2 * radius + padding) + radius + padding // 2
-            y = row * (2 * radius + padding) + radius + padding // 2
-            position = (x, y)
-            
-
-            pygame.draw.circle(screen, color, position, radius)
-
-
-
-    #update the display
     pygame.display.flip()
-
-
+    clock.tick(60)
