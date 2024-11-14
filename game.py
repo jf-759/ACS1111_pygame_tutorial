@@ -5,6 +5,9 @@ pygame.init()
 screen = pygame.display.set_mode([500, 500])
 
 lanes = [93, 218, 343]
+capture = 0
+initial_speed = 1
+increase_speed = 0.2
 
 # Game Object
 class GameObject(pygame.sprite.Sprite):
@@ -15,6 +18,7 @@ class GameObject(pygame.sprite.Sprite):
     self.x = x
     self.y = y
     self.rect = self.surf.get_rect() # this will give each image a dimension around it (to eventually get to collisions).
+
   def render(self, screen):
     self.rect.x = self.x
     self.rect.y = self.y
@@ -24,7 +28,7 @@ class Apple(GameObject):
     def __init__(self):
         super(Apple, self).__init__(0, 0, 'apple.png')
         self.dx = 0
-        self.dy = 0
+        self.dy = initial_speed
         self.direction = 'down'
         self.reset() # this is where you call the reset.
     
@@ -43,19 +47,20 @@ class Apple(GameObject):
         self.x = choice(lanes)
         self.y = -64
         self.direction = choice(['up', 'down'])
-        speed = (randint(0, 200) / 100)
+        # speed = (randint(0, 200) / 100)
         if self.direction == 'down':
             self.y = -64
-            self.dy = speed + 1
+            self.dy = initial_speed + (capture * increase_speed)
+
         elif self.direction == 'up':
             self.y = 500
-            self.dy = speed + 1
+            self.dy = initial_speed + (capture * increase_speed)
 
 
 class Strawberry(GameObject):
     def __init__(self):
         super(Strawberry, self).__init__(0, 0, 'strawberry.png')
-        self.dx = 0
+        self.dx = initial_speed
         self.dy = 0
         self.direction = 'right'
         self.reset() # this is where you call the reset.
@@ -76,11 +81,11 @@ class Strawberry(GameObject):
         self.direction = choice(['left', 'right'])
         speed = (randint(0, 200) / 100)
         if self.direction == 'right':
-            self.x = -64
-            self.dx = speed + 1
+            self.x = -64 if choice([True, False]) else 500
+            self.dx = initial_speed + (capture * increase_speed)
         elif self.direction == 'left':
             self.x = 500 
-            self.dx = speed + 1
+            self.dx = initial_speed + (capture * increase_speed)
 
 class Bomb(GameObject):
     def __init__(self):
@@ -207,6 +212,14 @@ all_sprites.add(bomb)
 fruit_sprites.add(apple)
 fruit_sprites.add(strawberry)
 
+def reset_game():
+    global capture
+    capture = 0
+    player.reset()
+    apple.reset()
+    strawberry.reset()
+    bomb.reset()
+
 # game loop
 running = True
 while running:
@@ -230,19 +243,21 @@ while running:
                 player.down()
                 print('DOWN')
 
-    screen.fill((255, 255, 255))
-
     # move and render Sprites
     for entity in all_sprites:
         entity.move()
-        entity.render(screen)
     
     fruit = pygame.sprite.spritecollideany(player, fruit_sprites)
     if fruit:
+        capture += 1
         fruit.reset()
 
     if pygame.sprite.collide_rect(player, bomb):
-        running = False
+        reset_game()
+
+    screen.fill((255, 255, 255))
+    for entity in all_sprites:
+        entity.render(screen)
 
     pygame.display.flip()
     clock.tick(60)
