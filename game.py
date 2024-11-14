@@ -53,25 +53,38 @@ class Strawberry(GameObject):
 class Player(GameObject):
     def __init__(self):
         super(Player, self).__init__(0, 0, 'player.png')
-        self.dx = 0
-        self.dy = 0
+        self.lane_x_index = 1
+        self.lane_y_index = 1
+        # self.dx = 0
+        # self.dy = 0
         self.reset()
 
     def left(self):
-        if self.dx > 0:
-            self.dx -= 100
+        if self.lane_x_index > 0:
+            self.lane_x_index -= 1
+            self.dx = lanes[self.lane_x_index]
+            # self.dx -= 100
         
     def right(self):
-        if self.dx < 500 - 64:
-            self.dx += 100
+        # if self.dx < 500 - 64:
+        if self.lane_x_index < len(lanes) - 1:
+            self.lane_x_index += 1
+            self.dx = lanes[self.lane_x_index]
+            # self.dx += 100
 
     def up(self):
-        if self.dy > 0:
-            self.dy  -= 100
+        if self.lane_y_index > 0:
+            self.lane_y_index -= 1
+            self.dy = lanes[self.lane_y_index]
+        # if self.dy > 0:
+        #     self.dy  -= 100
 
     def down(self):
-        if self.dy < 500 -64:
-            self.dy += 100
+        # if self.dy < 500 -64:
+        #     self.dy += 100
+        if self.lane_y_index < len(lanes) - 1:
+            self.lane_y_index += 1
+            self.dy = lanes[self.lane_y_index]
 
     def move(self):
         self.x -= (self.x - self.dx) * 0.25
@@ -81,8 +94,14 @@ class Player(GameObject):
         self.y = max(0, min(self.y, 500 - 64))
 
     def reset(self):
-       self.x = 250 - 32
-       self.y = 250 - 32
+    #    self.x = 250 - 32
+    #    self.y = 250 - 32
+        self.lane_x_index = 1
+        self.lane_y_index = 1
+        self.dx = lanes[self.lane_x_index]
+        self.dy = lanes[self.lane_y_index]
+        self.x = self.dx
+        self.y = self.dy
 
 # example from 03-making-things-move
 apple = Apple()
