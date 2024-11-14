@@ -2,7 +2,13 @@ from random import randint, choice
 import pygame
 pygame.init()
 
-screen = pygame.display.set_mode([500, 500])
+
+screen_width = 500
+screen_height = 500
+screen = pygame.display.set_mode([screen_width, screen_height])
+
+background = pygame.image.load('grass.png')
+background = pygame.transform.scale(background, (screen_width, screen_height))
 
 
 lanes = [93, 218, 343]
@@ -24,6 +30,13 @@ class GameObject(pygame.sprite.Sprite):
     self.rect.x = self.x
     self.rect.y = self.y
     screen.blit(self.surf, (self.x, self.y))
+
+class Background(pygame.sprite.Sprite):
+    def __init__(self, image_file, location):
+        pygame.sprite.Sprite.__init__(self)
+        self.image = pygame.image.load(image_file)
+        self.rect = self.image.get_rect()
+        self.rect.left, self.rect.top = location
 
 class Pizza(GameObject):
     def __init__(self):
@@ -92,7 +105,7 @@ class Chicken(GameObject):
 
 class Rock(GameObject):
     def __init__(self):
-        super(Rock, self).__init__(0, 0, 'rock.png')
+        super(Rock, self).__init__(0, 0, 'rocks-1.png')
         self.surf = pygame.transform.scale(self.surf, (64, 64))
         self.dx = 0
         self.dy = 0
@@ -202,10 +215,12 @@ class Player(GameObject):
 pizza = Pizza()
 chicken = Chicken()
 player = Player()
-clock = pygame.time.Clock()
-all_sprites = pygame.sprite.Group()
 rock = Rock()
+
+all_sprites = pygame.sprite.Group()
 food_sprites = pygame.sprite.Group()
+
+clock = pygame.time.Clock()
 
 all_sprites.add(player)
 all_sprites.add(pizza)
@@ -245,6 +260,8 @@ while running:
             elif event.key == pygame.K_DOWN:
                 player.down()
                 print('DOWN')
+
+    screen.blit(background, (0, 0))
 
     # move and render Sprites
     for entity in all_sprites:
