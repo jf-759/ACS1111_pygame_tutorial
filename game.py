@@ -4,6 +4,7 @@ pygame.init()
 
 screen = pygame.display.set_mode([500, 500])
 
+
 lanes = [93, 218, 343]
 capture = 0
 initial_speed = 1
@@ -24,9 +25,10 @@ class GameObject(pygame.sprite.Sprite):
     self.rect.y = self.y
     screen.blit(self.surf, (self.x, self.y))
 
-class Apple(GameObject):
+class Pizza(GameObject):
     def __init__(self):
-        super(Apple, self).__init__(0, 0, 'apple.png')
+        super(Pizza, self).__init__(0, 0, 'pizza.png')
+        self.surf = pygame.transform.scale(self.surf, (64, 64))
         self.dx = 0
         self.dy = initial_speed
         self.direction = 'down'
@@ -57,9 +59,10 @@ class Apple(GameObject):
             self.dy = initial_speed + (capture * increase_speed)
 
 
-class Strawberry(GameObject):
+class Chicken(GameObject):
     def __init__(self):
-        super(Strawberry, self).__init__(0, 0, 'strawberry.png')
+        super(Chicken, self).__init__(0, 0, 'chicken.png')
+        self.surf = pygame.transform.scale(self.surf, (64, 64))
         self.dx = initial_speed
         self.dy = 0
         self.direction = 'right'
@@ -87,10 +90,10 @@ class Strawberry(GameObject):
             self.x = 500 
             self.dx = initial_speed + (capture * increase_speed)
 
-class Bomb(GameObject):
+class Rock(GameObject):
     def __init__(self):
-        super(Bomb, self).__init__(0, 0, 'bomb.png')
-        self.surf = pygame.transform.scale(pygame.image.load('bomb.png'), (64, 64))
+        super(Rock, self).__init__(0, 0, 'rock.png')
+        self.surf = pygame.transform.scale(self.surf, (64, 64))
         self.dx = 0
         self.dy = 0
         self.direction = choice(['up', 'down', 'left', 'right'])
@@ -144,7 +147,7 @@ class Bomb(GameObject):
 
 class Player(GameObject):
     def __init__(self):
-        super(Player, self).__init__(0, 0, 'player.png')
+        super(Player, self).__init__(0, 0, 'w.png')
         self.dx = 0
         self.dy = 0
         self.pos_x = 1 # new attribute
@@ -196,29 +199,29 @@ class Player(GameObject):
         self.dy = lanes[self.pos_y]
 
 # example from 03-making-things-move
-apple = Apple()
-strawberry = Strawberry()
+pizza = Pizza()
+chicken = Chicken()
 player = Player()
 clock = pygame.time.Clock()
 all_sprites = pygame.sprite.Group()
-bomb = Bomb()
-fruit_sprites = pygame.sprite.Group()
+rock = Rock()
+food_sprites = pygame.sprite.Group()
 
 all_sprites.add(player)
-all_sprites.add(apple)
-all_sprites.add(strawberry)
-all_sprites.add(bomb)
+all_sprites.add(pizza)
+all_sprites.add(chicken)
+all_sprites.add(rock)
 
-fruit_sprites.add(apple)
-fruit_sprites.add(strawberry)
+food_sprites.add(pizza)
+food_sprites.add(chicken)
 
 def reset_game():
     global capture
     capture = 0
     player.reset()
-    apple.reset()
-    strawberry.reset()
-    bomb.reset()
+    pizza.reset()
+    chicken.reset()
+    rock.reset()
 
 # game loop
 running = True
@@ -247,12 +250,12 @@ while running:
     for entity in all_sprites:
         entity.move()
     
-    fruit = pygame.sprite.spritecollideany(player, fruit_sprites)
-    if fruit:
+    food = pygame.sprite.spritecollideany(player, food_sprites)
+    if food:
         capture += 1
-        fruit.reset()
+        food.reset()
 
-    if pygame.sprite.collide_rect(player, bomb):
+    if pygame.sprite.collide_rect(player, rock):
         reset_game()
 
     screen.fill((255, 255, 255))
