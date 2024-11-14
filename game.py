@@ -145,122 +145,122 @@ class Rock(GameObject):
             self.dx = speed + 1
             self.dy = 0
 
-# class Player(GameObject):
-#     def __init__(self):
-#         super(Player, self).__init__(0, 0, 'w.png')
-#         self.dx = 0
-#         self.dy = 0
-#         self.pos_x = 1 # new attribute
-#         self.pos_y = 1 # new attribute
-#         self.reset()
+class Player(GameObject):
+    def __init__(self):
+        super(Player, self).__init__(0, 0, 'w.png')
+        self.dx = 0
+        self.dy = 0
+        self.pos_x = 1 # new attribute
+        self.pos_y = 1 # new attribute
+        self.reset()
 
-#     def left(self):
-#         if self.pos_x > 0:
-#             self.pos_x -= 1
-#             self.update_dx_dy()
-#             # self.dx -= 100
+    def left(self):
+        if self.pos_x > 0:
+            self.pos_x -= 1
+            self.update_dx_dy()
+            # self.dx -= 100
         
-#     def right(self):
-#         # if self.dx < 500 - 64:
-#         if self.pos_x < len(lanes) - 1:
-#             self.pos_x += 1
-#             self.update_dx_dy()
-#             # self.dx += 100
+    def right(self):
+        # if self.dx < 500 - 64:
+        if self.pos_x < len(lanes) - 1:
+            self.pos_x += 1
+            self.update_dx_dy()
+            # self.dx += 100
 
-#     def up(self):
-#         if self.pos_y > 0:
-#             self.pos_y -= 1
-#             self.update_dx_dy()
-#         # if self.dy > 0:
-#         #     self.dy  -= 100
+    def up(self):
+        if self.pos_y > 0:
+            self.pos_y -= 1
+            self.update_dx_dy()
+        # if self.dy > 0:
+        #     self.dy  -= 100
 
-#     def down(self):
-#         if self.pos_y < len(lanes) - 1:
-#             self.pos_y += 1
-#             self.update_dx_dy()
+    def down(self):
+        if self.pos_y < len(lanes) - 1:
+            self.pos_y += 1
+            self.update_dx_dy()
 
-#     def move(self):
-#         self.x -= (self.x - self.dx) * 0.25
-#         self.y -= (self.y - self.dy) * 0.25
+    def move(self):
+        self.x -= (self.x - self.dx) * 0.25
+        self.y -= (self.y - self.dy) * 0.25
 
-#         self.x = max(0, min(self.x, 500 - 64))
-#         self.y = max(0, min(self.y, 500 - 64))
+        self.x = max(0, min(self.x, 500 - 64))
+        self.y = max(0, min(self.y, 500 - 64))
 
-#     def reset(self):
-#         self.x = choice(lanes)
-#         self.y = -64
-#         self.x = lanes[self.pos_x]
-#         self.y = lanes[self.pos_y]
-#         self.x = self.dx
-#         self.y = self.dy
+    def reset(self):
+        self.x = choice(lanes)
+        self.y = -64
+        self.x = lanes[self.pos_x]
+        self.y = lanes[self.pos_y]
+        self.x = self.dx
+        self.y = self.dy
 
-#     def update_dx_dy(self):
-#         self.dx = lanes[self.pos_x]
-#         self.dy = lanes[self.pos_y]
+    def update_dx_dy(self):
+        self.dx = lanes[self.pos_x]
+        self.dy = lanes[self.pos_y]
 
-# # example from 03-making-things-move
-# pizza = Pizza()
-# chicken = Chicken()
-# player = Player()
-# clock = pygame.time.Clock()
-# all_sprites = pygame.sprite.Group()
-# rock = Rock()
-# food_sprites = pygame.sprite.Group()
+# example from 03-making-things-move
+pizza = Pizza()
+chicken = Chicken()
+player = Player()
+clock = pygame.time.Clock()
+all_sprites = pygame.sprite.Group()
+rock = Rock()
+food_sprites = pygame.sprite.Group()
 
-# all_sprites.add(player)
-# all_sprites.add(pizza)
-# all_sprites.add(chicken)
-# all_sprites.add(rock)
+all_sprites.add(player)
+all_sprites.add(pizza)
+all_sprites.add(chicken)
+all_sprites.add(rock)
 
-# food_sprites.add(pizza)
-# food_sprites.add(chicken)
+food_sprites.add(pizza)
+food_sprites.add(chicken)
 
-# def reset_game():
-#     global capture
-#     capture = 0
-#     player.reset()
-#     pizza.reset()
-#     chicken.reset()
-#     rock.reset()
+def reset_game():
+    global capture
+    capture = 0
+    player.reset()
+    pizza.reset()
+    chicken.reset()
+    rock.reset()
 
-# # game loop
-# running = True
-# while running:
-#     # looks at events
-#     for event in pygame.event.get():
-#         if event.type == pygame.QUIT:
-#             running = False
-#         elif event.type == pygame.KEYDOWN:
-#             if event.key == pygame.K_ESCAPE:
-#                running = False
-#             elif event.key == pygame.K_LEFT:
-#                 player.left()
-#                 print('LEFT')
-#             elif event.key == pygame.K_RIGHT:
-#                 player.right()
-#                 print('RIGHT')
-#             elif event.key == pygame.K_UP:
-#                 player.up()
-#                 print('UP')
-#             elif event.key == pygame.K_DOWN:
-#                 player.down()
-#                 print('DOWN')
+# game loop
+running = True
+while running:
+    # looks at events
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            running = False
+        elif event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_ESCAPE:
+               running = False
+            elif event.key == pygame.K_LEFT:
+                player.left()
+                print('LEFT')
+            elif event.key == pygame.K_RIGHT:
+                player.right()
+                print('RIGHT')
+            elif event.key == pygame.K_UP:
+                player.up()
+                print('UP')
+            elif event.key == pygame.K_DOWN:
+                player.down()
+                print('DOWN')
 
-#     # move and render Sprites
-#     for entity in all_sprites:
-#         entity.move()
+    # move and render Sprites
+    for entity in all_sprites:
+        entity.move()
     
-#     food = pygame.sprite.spritecollideany(player, food_sprites)
-#     if food:
-#         capture += 1
-#         food.reset()
+    food = pygame.sprite.spritecollideany(player, food_sprites)
+    if food:
+        capture += 1
+        food.reset()
 
-#     if pygame.sprite.collide_rect(player, rock):
-#         reset_game()
+    if pygame.sprite.collide_rect(player, rock):
+        reset_game()
 
-#     screen.fill((255, 255, 255))
-#     for entity in all_sprites:
-#         entity.render(screen)
+    screen.fill((255, 255, 255))
+    for entity in all_sprites:
+        entity.render(screen)
 
-#     pygame.display.flip()
-#     clock.tick(60)
+    pygame.display.flip()
+    clock.tick(60)
