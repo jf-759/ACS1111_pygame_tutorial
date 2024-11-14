@@ -41,12 +41,13 @@ class Apple(GameObject):
         self.x = choice(lanes)
         self.y = -64
         self.direction = choice(['up', 'down'])
+        speed = (randint(0, 200) / 100)
         if self.direction == 'down':
             self.y = -64
-            self.dy = (randint(0, 200) / 100) + 1
+            self.dy = speed + 1
         elif self.direction == 'up':
             self.y = 500
-            self.dy = (randint(0, 200) / 100) + 1
+            self.dy = speed + 1
 
 
 class Strawberry(GameObject):
@@ -71,12 +72,68 @@ class Strawberry(GameObject):
     def reset(self):
         self.y = choice(lanes)
         self.direction = choice(['left', 'right'])
+        speed = (randint(0, 200) / 100)
         if self.direction == 'right':
             self.x = -64
-            self.dx = (randint(0, 200) / 100) + 1
+            self.dx = speed + 1
         elif self.direction == 'left':
             self.x = 500 
-            self.dx = (randint(0, 200) / 100) + 1
+            self.dx = speed + 1
+
+class Bomb(GameObject):
+    def __init__(self):
+        super(Bomb, self).__init__(0, 0, 'bomb.png')
+        self.surf = pygame.transform.scale(pygame.image.load('bomb.png'), (64, 64))
+        self.dx = 0
+        self.dy = 0
+        self.direction = choice(['up', 'down', 'left', 'right'])
+        self.reset()
+
+    def move(self):
+        if self.direction == 'down':
+            self.y += self.dy
+            if self.y > 500:
+                self.reset()
+        elif self.direction =='up':
+            self.y -= self.dy
+            if self.y < -64:
+                self.reset()
+
+        elif self.direction == 'right':
+            self.x += self.dx
+            if self.x > 500:
+                self.reset()
+        elif self.direction == 'left':
+            self.x -= self.dx
+            if self.x < -64:
+                self.reset()
+    
+    def reset(self):
+        self.direction = choice(['up', 'down', 'left', 'right'])
+        speed = (randint (50, 100) / 100)
+        if self.direction == 'down':
+            self.x = choice(lanes)
+            self.y = -64
+            self.dy = speed + 1
+            self.dx = 0
+        
+        elif self.direction == 'up':
+            self.x = choice(lanes)
+            self.y = 500
+            self.dy = speed + 1
+            self.dx = 0
+        
+        elif self.direction == 'right':
+            self.x = -64
+            self.y = choice(lanes)
+            self.dx = speed + 1
+            self.dy = 0
+
+        elif self.direction == 'left':
+            self.x = 500
+            self.y = choice(lanes)
+            self.dx = speed + 1
+            self.dy = 0
 
 class Player(GameObject):
     def __init__(self):
@@ -137,10 +194,12 @@ strawberry = Strawberry()
 player = Player()
 clock = pygame.time.Clock()
 all_sprites = pygame.sprite.Group()
+bomb = Bomb()
 
 all_sprites.add(player)
 all_sprites.add(apple)
 all_sprites.add(strawberry)
+all_sprites.add(bomb)
 
 # game loop
 running = True
