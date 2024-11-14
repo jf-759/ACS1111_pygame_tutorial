@@ -14,8 +14,10 @@ class GameObject(pygame.sprite.Sprite):
     self.surf = pygame.image.load(image) # ADD!
     self.x = x
     self.y = y
-
+    self.rect = self.surf.get_rect() # this will give each image a dimension around it (to eventually get to collisions).
   def render(self, screen):
+    self.rect.x = self.x
+    self.rect.y = self.y
     screen.blit(self.surf, (self.x, self.y))
 
 class Apple(GameObject):
@@ -195,11 +197,15 @@ player = Player()
 clock = pygame.time.Clock()
 all_sprites = pygame.sprite.Group()
 bomb = Bomb()
+fruit_sprites = pygame.sprite.Group()
 
 all_sprites.add(player)
 all_sprites.add(apple)
 all_sprites.add(strawberry)
 all_sprites.add(bomb)
+
+fruit_sprites.add(apple)
+fruit_sprites.add(strawberry)
 
 # game loop
 running = True
@@ -231,28 +237,12 @@ while running:
         entity.move()
         entity.render(screen)
     
+    fruit = pygame.sprite.spritecollideany(player, fruit_sprites)
+    if fruit:
+        fruit.reset()
 
-    # # draw apple
-    # apple.move()
-    # apple.render(screen)
-
-    # # draw strawberry
-    # strawberry.move()
-    # strawberry.render(screen)
-
-    # # draw player
-    # player.move()
-    # player.render(screen)
-
-    # apple1.render(screen)
-    # apple2.render(screen)
-    # apple3.render(screen)
-    # apple4.render(screen)
-    # apple5.render(screen)
-    # strawberry1.render(screen)
-    # strawberry2.render(screen)
-    # strawberry3.render(screen)
-    # strawberry4.render(screen)
+    if pygame.sprite.collide_rect(player, bomb):
+        running = False
 
     pygame.display.flip()
     clock.tick(60)
