@@ -1,13 +1,12 @@
-from random import randint, choice
-import pygame
+import pygame # type: ignore
 pygame.init()
-
+from random import randint, choice
 
 screen_width = 500
 screen_height = 500
 screen = pygame.display.set_mode([screen_width, screen_height])
 
-background = pygame.image.load('grass.png')
+background = pygame.image.load('sky.png')
 background = pygame.transform.scale(background, (screen_width, screen_height))
 
 
@@ -19,17 +18,17 @@ increase_speed = 0.2
 # Game Object
 class GameObject(pygame.sprite.Sprite):
   # Remove width and height and add image here!
-  def __init__(self, x, y, image):
-    super(GameObject, self).__init__()
-    self.surf = pygame.image.load(image) # ADD!
-    self.x = x
-    self.y = y
-    self.rect = self.surf.get_rect() # this will give each image a dimension around it (to eventually get to collisions).
+    def __init__(self, x, y, image):
+        super(GameObject, self).__init__()
+        self.surf = pygame.image.load(image) # ADD!
+        self.x = x
+        self.y = y
+        self.rect = self.surf.get_rect() # this will give each image a dimension around it (to eventually get to collisions).
 
-  def render(self, screen):
-    self.rect.x = self.x
-    self.rect.y = self.y
-    screen.blit(self.surf, (self.x, self.y))
+    def render(self, screen):
+        self.rect.x = self.x
+        self.rect.y = self.y
+        screen.blit(self.surf, (self.x, self.y))
 
 class Background(pygame.sprite.Sprite):
     def __init__(self, image_file, location):
@@ -74,7 +73,7 @@ class Pizza(GameObject):
 
 class Chicken(GameObject):
     def __init__(self):
-        super(Chicken, self).__init__(0, 0, 'chicken.png')
+        super(Chicken, self).__init__(0, 0, 'fried_chicken.png')
         self.surf = pygame.transform.scale(self.surf, (64, 64))
         self.dx = initial_speed
         self.dy = 0
@@ -158,6 +157,29 @@ class Rock(GameObject):
             self.dx = speed + 1
             self.dy = 0
 
+class Cloud(GameObject):
+    def __init__(self):
+        cloud_images = ['Cloud-a.png', 'Cloud-b.png', 'Cloud-c.png']
+        cloud_image = choice(cloud_images)
+
+        super(Cloud, self).__init__(-64, randint(0, screen_height //2),  cloud_image)
+        # self.surf = pygame.transform.scale(self.surf, (randint(64, 128), randint(32, 64)))
+        self.dx = randint(1, 3) # this is for the cloud's speed
+
+    def move(self):
+        self.x += self.dx
+        if self.x > screen_width: # resets when cloud goes off screen
+            self.reset()
+
+    def reset(self):
+        cloud_images = ['Cloud-a.png', 'Cloud-b.png', 'Cloud-c.png']
+        cloud_image = choice(cloud_images)
+        self.surf = pygame.image.load(cloud_image)
+        
+        self.x = -64
+        self.y = randint(0, screen_height // 2)
+        self.dx = randint(1, 3)
+
 class Player(GameObject):
     def __init__(self):
         super(Player, self).__init__(0, 0, 'w.png')
@@ -210,12 +232,21 @@ class Player(GameObject):
     def update_dx_dy(self):
         self.dx = lanes[self.pos_x]
         self.dy = lanes[self.pos_y]
+    
+def reset_game():
+    global capture
+    capture = 0
+    player.reset()
+    pizza.reset()
+    chicken.reset()
+    rock.reset()
 
 # example from 03-making-things-move
 pizza = Pizza()
 chicken = Chicken()
 player = Player()
 rock = Rock()
+cloud = Cloud()
 
 all_sprites = pygame.sprite.Group()
 food_sprites = pygame.sprite.Group()
@@ -226,17 +257,12 @@ all_sprites.add(player)
 all_sprites.add(pizza)
 all_sprites.add(chicken)
 all_sprites.add(rock)
+all_sprites.add(cloud)
 
 food_sprites.add(pizza)
 food_sprites.add(chicken)
 
-def reset_game():
-    global capture
-    capture = 0
-    player.reset()
-    pizza.reset()
-    chicken.reset()
-    rock.reset()
+
 
 # game loop
 running = True
@@ -261,12 +287,11 @@ while running:
                 player.down()
                 print('DOWN')
 
-    screen.blit(background, (0, 0))
 
     # move and render Sprites
     for entity in all_sprites:
         entity.move()
-    
+
     food = pygame.sprite.spritecollideany(player, food_sprites)
     if food:
         capture += 1
@@ -275,7 +300,7 @@ while running:
     if pygame.sprite.collide_rect(player, rock):
         reset_game()
 
-    screen.fill((255, 255, 255))
+    screen.blit(background, (0, 0))
     for entity in all_sprites:
         entity.render(screen)
 
